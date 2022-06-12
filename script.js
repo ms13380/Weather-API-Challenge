@@ -10,15 +10,11 @@ var searchEl = document.querySelector('search');
 var historyButtonsEl = document.querySelector("historybuttons")
 var historyCardEl = document.querySelector("history")
 var trashEl = document.querySelector("trash")
+
 var searchHistoryArray = []
-
-
 var formSubmitHandler = function (event) {
     event.preventDefault();
-    // get city name value from input element
     var cityname = cityNameInputEl.value.trim();
-
-    // Set city name in local storage and generate history buttons
     if (cityname) {
         searchHistoryArray.push(cityname);
         localStorage.setItem("weatherSearch", JSON.stringify(searchHistoryArray));
@@ -32,86 +28,70 @@ var formSubmitHandler = function (event) {
         cityNameInputEl.value = "";
     }
     else {
-        alert("Please enter a City name");
+        alert("Enter City Name");
     }
 
 }
 
-// Get weather information from OpenWeather
+// Openweather API
 var getWeatherInfo = function (cityname) {
     var apiCityUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityname + "&units=imperial&appid=f97301447cbd41068af8623a398ba1fb";
-    fetch(
-        // Make a fetch request using city name to get latitude and longitude for city
-        apiCityUrl
-    )
+    fetch(apiCityUrl)
         .then(function (cityResponse) {
             return cityResponse.json();
         })
         .then(function (cityResponse) {
-            // Create variables to hold the latitude and longitude of requested city
             console.log(cityResponse)
             var latitude = cityResponse.coord.lat;
             var longitude = cityResponse.coord.lon;
-
-            // Create variables for City name, current date and icon information for use in current Weather heading
             var city = cityResponse.name;
             var date = (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
             var weatherIcon = cityResponse.weather[0].icon;
             var weatherDescription = cityResponse.weather[0].description;
             var weatherIconLink = "<img src='http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png' alt='" + weatherDescription + "' title='" + weatherDescription + "'  />"
-
-            // Empty Current Weather element for new data
             currentWeatherEl.textContent = "";
             fiveDayEl.textContent = "";
-
-            // Update <h2> element to show city, date and icon
             weatherStatusEl.innerHTML = city + " (" + date + ") " + weatherIconLink;
-
-            // Remove class name 'hidden' to show current weather card
             currentWeatherCardEl.classList.remove("hidden");
             fiveDayCardEl.classList.remove("hidden");
-
-            // Return a fetch request to the OpenWeather using longitude and latitude from pervious fetch
             return fetch('https://api.openweathermap.org/data/2.5/onecall?lat=' + latitude + '&lon=' + longitude + '&exclude=alerts,minutely,hourly&units=imperial&appid=f97301447cbd41068af8623a398ba1fb');
         })
         .then(function (response) {
-            // return response in json format
+           //json formatting
             return response.json();
         })
         .then(function (response) {
             console.log(response);
-            // send response data to displayWeather function for final display 
             displayWeather(response);
 
         });
 };
 
-// Display the weather on page
+// Dsp Weather
 var displayWeather = function (weather) {
-    // check if api returned any weather data
     if (weather.length === 0) {
         weatherContainerEl.textContent = "No weather data found.";
         return;
     }
-    // Create Temperature element
+    //  Temperature 
     var temperature = document.createElement('p');
     temperature.id = "temperature";
     temperature.innerHTML = "<strong>Temperature:</strong> " + weather.current.temp.toFixed(1) + "°F";
     currentWeatherEl.appendChild(temperature);
 
-    // Create Humidity element
+    // Humidity 
     var humidity = document.createElement('p');
     humidity.id = "humidity";
     humidity.innerHTML = "<strong>Humidity:</strong> " + weather.current.humidity + "%";
     currentWeatherEl.appendChild(humidity);
 
-    // Create Wind Speed element
+    // Windspeed
     var windSpeed = document.createElement('p');
     windSpeed.id = "wind-speed";
     windSpeed.innerHTML = "<strong>Wind Speed:</strong> " + weather.current.wind_speed.toFixed(1) + " MPH";
     currentWeatherEl.appendChild(windSpeed);
 
-    // Create uv-index element
+    //Index Elemtent - UV
     var uvIndex = document.createElement('p');
     var uvIndexValue = weather.current.uvi.toFixed(1);
     uvIndex.id = "uv-index";
@@ -127,10 +107,10 @@ var displayWeather = function (weather) {
     uvIndex.innerHTML = "<strong>UV Index:</strong> <span>" + uvIndexValue + "</span>";
     currentWeatherEl.appendChild(uvIndex);
 
-    // Get extended forecast data
+    // Forecast Data
     var forecastArray = weather.daily;
 
-    // Create day cards for extended forecast
+    // Create forecast cards
     for (let i = 0; i < forecastArray.length - 3; i++) {
         var date = (today.getMonth() + 1) + '/' + (today.getDate() + i + 1) + '/' + today.getFullYear();
         var weatherIcon = forecastArray[i].weather[0].icon;
@@ -149,7 +129,6 @@ var displayWeather = function (weather) {
 
 }
 
-// Load any past city weather searches
 var loadHistory = function () {
     searchArray = JSON.parse(localStorage.getItem("weatherSearch"));
 
@@ -167,7 +146,6 @@ var loadHistory = function () {
     }
 }
 
-// Search weather using search history buttons
 var buttonClickHandler = function (event) {
     var cityname = event.target.getAttribute("data-city");
     if (cityname) {
@@ -175,14 +153,11 @@ var buttonClickHandler = function (event) {
     }
 }
 
-// Clear Search History
 var clearHistory = function (event) {
     localStorage.removeItem("weatherSearch");
     historyCardEl.setAttribute("style", "display: none");
 }
-
 cityFormEl.addEventListener("submit", formSubmitHandler);
 historyButtonsEl.addEventListener("click", buttonClickHandler);
 trashEl.addEventListener("click", clearHistory);
-
 loadHistory();
