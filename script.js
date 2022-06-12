@@ -1,15 +1,15 @@
 var today = new Date();
-var cityFormEl = document.querySelector("#city-form");
-var cityNameInputEl = document.querySelector("#cityname");
-var currentWeatherEl = document.querySelector('#current-weather');
-var currentWeatherCardEl = document.querySelector("#current-weather-card")
-var fiveDayCardEl = document.querySelector("#five-day-card");
-var fiveDayEl = document.querySelector("#five-day-body");
-var weatherStatusEl = document.querySelector('#weather-status');
-var searchEl = document.querySelector('#search');
-var historyButtonsEl = document.querySelector("#history-buttons")
-var historyCardEl = document.querySelector("#history")
-var trashEl = document.querySelector("#trash")
+var cityFormEl = document.querySelector("city");
+var cityNameInputEl = document.querySelector("cityName");
+var currentWeatherEl = document.querySelector('currentWeather');
+var currentWeatherCardEl = document.querySelector("currentweathercard")
+var fiveDayCardEl = document.querySelector("fivedaycard");
+var fiveDayEl = document.querySelector("fivedaybody");
+var weatherStatusEl = document.querySelector('weatherstatus');
+var searchEl = document.querySelector('search');
+var historyButtonsEl = document.querySelector("historybuttons")
+var historyCardEl = document.querySelector("history")
+var trashEl = document.querySelector("trash")
 var searchHistoryArray = []
 
 
@@ -24,7 +24,7 @@ var formSubmitHandler = function (event) {
         localStorage.setItem("weatherSearch", JSON.stringify(searchHistoryArray));
         var searchHistoryEl = document.createElement('button');
         searchHistoryEl.className = "btn";
-        searchHistoryEl.setAttribute("data-city", cityname)
+        searchHistoryEl.setAttribute("datacity", cityname)
         searchHistoryEl.innerHTML = cityname;
         historyButtonsEl.appendChild(searchHistoryEl);
         historyCardEl.removeAttribute("style")
@@ -158,7 +158,7 @@ var loadHistory = function () {
         for (let i = 0; i < searchArray.length; i++) {
             var searchHistoryEl = document.createElement('button');
             searchHistoryEl.className = "btn";
-            searchHistoryEl.setAttribute("data-city", searchArray[i])
+            searchHistoryEl.setAttribute("datacity", searchArray[i])
             searchHistoryEl.innerHTML = searchArray[i];
             historyButtonsEl.appendChild(searchHistoryEl);
             historyCardEl.removeAttribute("style");
